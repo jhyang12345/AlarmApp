@@ -2,6 +2,8 @@ package com.arrata.user.alarmapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import io.realm.Realm;
@@ -11,37 +13,45 @@ public class MainActivity extends AppCompatActivity {
 
     Realm myRealm;
 
+    RecyclerView mRecyclerView;
+
+    AlarmAdapter alarmAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+
         myRealm = Realm.getInstance(this);
 
-        int startcode = 0;
-        int count = 0;
-        RealmResults<Alarm> results = myRealm.where(Alarm.class).findAll();
-        if(results.size() == 0) {
-            startcode = 0;
-        } else {
-            startcode = getNextKey();
-        }
+        long time = System.currentTimeMillis();
 
         myRealm.beginTransaction();
 
         Alarm alarm1 = myRealm.createObject(Alarm.class);
-        alarm1.setCode(startcode);
+        alarm1.setCode(time);
 
         myRealm.commitTransaction();
 
         RealmResults<Alarm> results2 =
                 myRealm.where(Alarm.class)
                         .findAll();
-        for(int i = 0; i < results2.size(); ++i) {
-            Log.d("Alarms", String.valueOf(results2.get(i).getHours()));
-        }
-        Log.d("Alarms", String.valueOf(results2.size()));
+
+        alarmAdapter = new AlarmAdapter(this);
+        mRecyclerView.setAdapter(alarmAdapter);
+
+        alarmAdapter.setItems(results2);
+
     }
+
 
     public int getNextKey() {
         return myRealm.where(Alarm.class).max("code").intValue() + 1;
