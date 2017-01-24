@@ -30,5 +30,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="4dp"
+        android:id="@+id/add_alarm"
         />
 </RelativeLayout>

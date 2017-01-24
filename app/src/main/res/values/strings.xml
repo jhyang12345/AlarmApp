@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Alarm App</string>
+    <string name="title_activity_settings">Setting Alarm</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>
