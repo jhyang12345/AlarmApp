@@ -1,7 +1,9 @@
 package com.arrata.user.alarmapp;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,14 +14,17 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class SettingsActivity extends AppCompatActivity {
 
     EditText mHours;
     EditText mMinutes;
-    
+
 
     TextView mMonday;
     TextView mTuesday;
@@ -28,6 +33,10 @@ public class SettingsActivity extends AppCompatActivity {
     TextView mFriday;
     TextView mSaturday;
     TextView mSunday;
+
+    Button mSave;
+
+    TimePicker timePicker;
 
     static boolean mon = false;
     static boolean tue = false;
@@ -44,9 +53,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_settings);
 
-        mHours = (EditText) findViewById(R.id.hours);
-        mMinutes = (EditText) findViewById(R.id.minutes);
-
         mMonday = (TextView) findViewById(R.id.monday);
         mTuesday = (TextView) findViewById(R.id.tuesday);
         mWednesday = (TextView) findViewById(R.id.wednesday);
@@ -55,7 +61,9 @@ public class SettingsActivity extends AppCompatActivity {
         mSaturday = (TextView) findViewById(R.id.saturday);
         mSunday = (TextView) findViewById(R.id.sunday);
 
-        ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null);
+        mSave = (Button) findViewById(R.id.save);
+
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
 
         Intent intent = getIntent();
         String role = intent.getStringExtra("role");
@@ -63,66 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
         else adding = false;
 
         Log.d("SettingsActivity role", String.valueOf(adding));
-
-        mHours.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 2) {
-                    mHours.setText(s.subSequence(0, 2));
-                }
-                if(s.toString().length() > 0 && Integer.valueOf(s.toString()) > 23) {
-                    mHours.setText(String.valueOf(23));
-                }
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });
-/*
-        mHours.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if(v.etTe.toString().length() == 0) {
-                        mHours.setText("00");
-                    }
-                    if(s.toString().length() < 2) {
-                        mHours.setText("0" + s.toString());
-                    }
-                }
-            }
-        });*/
-
-        mMinutes.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 2) {
-                    mMinutes.setText(s.subSequence(0, 2));
-                }
-                if(s.toString().length() > 0 && Integer.valueOf(s.toString()) > 59) {
-                    mMinutes.setText(String.valueOf(59));
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         mMonday.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +173,22 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        mSave.setOnClickListener(new View.OnClickListener() {
+            int hours;
+            int minutes;
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= 23 ) {
+                    hours = timePicker.getHour();
+                    minutes = timePicker.getMinute();
+                } else {
+                    hours = timePicker.getCurrentHour();
+                    minutes = timePicker.getCurrentHour();
+                }
+                Log.d("Current hour", String.valueOf(hours));
+            }
+
+        });
 
     }
 
