@@ -70,6 +70,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -80,6 +81,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -90,6 +92,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -100,6 +103,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -110,6 +114,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -120,6 +125,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
         <TextView
@@ -130,6 +136,7 @@
             android:layout_weight="1"
             android:textSize="20dp"
             android:gravity="center"
+            android:padding="10dp"
             />
 
     </LinearLayout>
