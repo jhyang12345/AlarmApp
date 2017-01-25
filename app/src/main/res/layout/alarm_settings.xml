@@ -27,6 +27,7 @@
             android:gravity="center"
             android:textSize="60dp"
             android:inputType="number"
+            android:maxLength="2"
             />
         <TextView
             android:layout_width="0dp"
@@ -45,6 +46,7 @@
             android:gravity="center"
             android:textSize="60dp"
             android:inputType="number"
+            android:maxLength="2"
             />
 
     </LinearLayout>
