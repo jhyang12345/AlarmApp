@@ -32,8 +32,11 @@
         />
 
     <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="-6dp"
+        android:layout_marginTop="-4dp"
+        android:padding="7dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:alpha="0.4"
