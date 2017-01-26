@@ -1,6 +1,7 @@
 package com.arrata.user.alarmapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -115,6 +117,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         holder.activeIcon.setTag(position);
 
+        activate((ImageView) holder.activeIcon, alarm.isActive());
+
         holder.activeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +149,19 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         if(alarm.isFriday()) selectDay(holder.fri);
         if(alarm.isSaturday()) selectDay(holder.sat);
         if(alarm.isSunday()) selectDay(holder.sun);
+
+        holder.wholeAlarm.setTag(alarm.getCode());
+        holder.wholeAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("WholeAlarm", "clicked!");
+                Intent intent = new Intent(context, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("role", "edit");
+                intent.putExtra("code", (long) v.getTag());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -173,9 +190,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         private TextView sat;
         private TextView sun;
 
+        private RelativeLayout wholeAlarm;
+
 
         public ViewHolder(View v) {
             super(v);
+            wholeAlarm = (RelativeLayout) v.findViewById(R.id.whole_alarm);
             alarmTime = (TextView) v.findViewById(R.id.alarmtime);
             ampm = (TextView) v.findViewById(R.id.ampm);
             alarmMessage = (TextView) v.findViewById(R.id.message);

@@ -8,6 +8,7 @@
     android:layout_marginRight="10dp"
     android:layout_marginLeft="10dp"
     android:elevation="2dp"
+    android:id="@+id/whole_alarm"
     >
 
     <ImageView
@@ -45,9 +46,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/alarmtime"
         android:layout_alignBottom="@+id/alarmtime"
-        android:textSize="30dp"
+        android:textSize="26dp"
         android:id="@+id/ampm"
         />
 

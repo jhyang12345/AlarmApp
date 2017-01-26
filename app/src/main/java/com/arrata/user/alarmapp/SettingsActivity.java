@@ -52,6 +52,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     static boolean adding = false;
 
+    static long code;
+
     static String message = "";
 
     Realm myRealm;
@@ -84,6 +86,9 @@ public class SettingsActivity extends AppCompatActivity {
         else adding = false;
 
         Log.d("SettingsActivity role", String.valueOf(adding));
+        if(!adding) {
+            Log.d("SettingActivity code", String.valueOf(code));
+        }
 
         mMonday.setOnClickListener(new View.OnClickListener() {
             @Override
