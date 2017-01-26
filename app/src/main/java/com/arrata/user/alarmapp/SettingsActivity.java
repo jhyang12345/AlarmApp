@@ -1,5 +1,6 @@
 package com.arrata.user.alarmapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -19,6 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import io.realm.Realm;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -48,6 +51,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     static boolean adding = false;
 
+    Realm myRealm;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,8 @@ public class SettingsActivity extends AppCompatActivity {
         mSave = (Button) findViewById(R.id.save);
 
         timePicker = (TimePicker) findViewById(R.id.timePicker);
+
+        myRealm = Realm.getInstance(this);
 
         Intent intent = getIntent();
         String role = intent.getStringExtra("role");
@@ -186,6 +194,29 @@ public class SettingsActivity extends AppCompatActivity {
                     minutes = timePicker.getCurrentHour();
                 }
                 Log.d("Current hour", String.valueOf(hours));
+
+                long time = System.currentTimeMillis();
+
+                myRealm.beginTransaction();
+
+                Alarm alarm = myRealm.createObject(Alarm.class);
+                alarm.setHours(hours);
+                alarm.setMinutes(minutes);
+                alarm.setCode(time);
+                alarm.setEdited(time);
+                alarm.setMonday(mon);
+                alarm.setTuesday(tue);
+                alarm.setWednesday(wed);
+                alarm.setThursday(thu);
+                alarm.setFriday(fri);
+                alarm.setSaturday(sat);
+                alarm.setSunday(sun);
+
+                myRealm.commitTransaction();
+
+                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
 
         });

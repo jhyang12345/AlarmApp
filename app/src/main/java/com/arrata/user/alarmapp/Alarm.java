@@ -14,6 +14,7 @@ public class Alarm extends RealmObject {
 
     @PrimaryKey
     private long code;
+    private long edited;
     private int hours;
     private int minutes;
     private boolean monday = false;
@@ -24,6 +25,7 @@ public class Alarm extends RealmObject {
     private boolean saturday = false;
     private boolean sunday = false;
     private boolean active;
+    private String message;
     public static String[] daysofweek = {"월", "화", "수", "목", "금", "토", "일"};
 
     public long getCode() {
@@ -115,6 +117,22 @@ public class Alarm extends RealmObject {
         this.sunday = sunday;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public long getEdited() {
+        return edited;
+    }
+
+    public void setEdited(long edited) {
+        this.edited = edited;
+    }
+
     public Alarm() {
         hours = 0;
         minutes = 0;
@@ -126,5 +144,6 @@ public class Alarm extends RealmObject {
         friday = false;
         saturday = false;
         sunday = false;
+        message = "";
     }
 }
