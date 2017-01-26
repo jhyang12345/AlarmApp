@@ -71,9 +71,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             System.out.println(dateObj);
             SimpleDateFormat next = new SimpleDateFormat("K:mm a");
             next.setDateFormatSymbols(symbols);
+
             holder.ampm.setText(next.format(dateObj).substring(next.format(dateObj).length() - 2, next.format(dateObj).length()));
             System.out.println(next.format(dateObj));
         } catch (ParseException e) {
+
+            holder.ampm.setText("");
             e.printStackTrace();
         }
 
