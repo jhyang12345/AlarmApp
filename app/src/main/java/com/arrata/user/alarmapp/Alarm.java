@@ -136,7 +136,7 @@ public class Alarm extends RealmObject {
     public Alarm() {
         hours = 0;
         minutes = 0;
-        active = false;
+        active = true;
         monday = false;
         tuesday = false;
         wednesday = false;

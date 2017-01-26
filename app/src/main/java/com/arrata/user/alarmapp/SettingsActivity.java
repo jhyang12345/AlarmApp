@@ -28,6 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
     EditText mHours;
     EditText mMinutes;
 
+    EditText mMessage;
 
     TextView mMonday;
     TextView mTuesday;
@@ -51,6 +52,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     static boolean adding = false;
 
+    static String message = "";
+
     Realm myRealm;
 
 
@@ -58,6 +61,8 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_settings);
+
+        mMessage = (EditText) findViewById(R.id.message);
 
         mMonday = (TextView) findViewById(R.id.monday);
         mTuesday = (TextView) findViewById(R.id.tuesday);
@@ -84,7 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!mon) {
-                    mMonday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mMonday.setBackgroundResource(R.drawable.selected_background);
                     mMonday.setTextColor(Color.WHITE);
                     mon = true;
                 } else {
@@ -98,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!tue) {
-                    mTuesday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mTuesday.setBackgroundResource(R.drawable.selected_background);
                     mTuesday.setTextColor(Color.WHITE);
                     tue = true;
                 } else {
@@ -113,7 +118,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!wed) {
-                    mWednesday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mWednesday.setBackgroundResource(R.drawable.selected_background);
                     mWednesday.setTextColor(Color.WHITE);
                     wed = true;
                 } else {
@@ -127,7 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!thu) {
-                    mThursday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mThursday.setBackgroundResource(R.drawable.selected_background);
                     mThursday.setTextColor(Color.WHITE);
                     thu = true;
                 } else {
@@ -141,7 +146,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!fri) {
-                    mFriday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mFriday.setBackgroundResource(R.drawable.selected_background);
                     mFriday.setTextColor(Color.WHITE);
 
                     fri = true;
@@ -156,7 +161,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!sat) {
-                    mSaturday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mSaturday.setBackgroundResource(R.drawable.selected_background);
                     mSaturday.setTextColor(Color.WHITE);
                     sat = true;
                 } else {
@@ -170,7 +175,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!sun) {
-                    mSunday.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+                    mSunday.setBackgroundResource(R.drawable.selected_background);
                     mSunday.setTextColor(Color.WHITE);
                     sun = true;
                 } else {
@@ -197,6 +202,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                 long time = System.currentTimeMillis();
 
+                message = mMessage.getText().toString();
+
                 myRealm.beginTransaction();
 
                 Alarm alarm = myRealm.createObject(Alarm.class);
@@ -211,7 +218,8 @@ public class SettingsActivity extends AppCompatActivity {
                 alarm.setFriday(fri);
                 alarm.setSaturday(sat);
                 alarm.setSunday(sun);
-
+                alarm.setActive(true);
+                alarm.setMessage(message);
                 myRealm.commitTransaction();
 
                 Intent intent = new Intent(SettingsActivity.this, MainActivity.class);

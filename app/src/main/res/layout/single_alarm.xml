@@ -12,23 +12,43 @@
 
     <ImageView
         android:id="@+id/alarm_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/alarm"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         />
-
     <TextView
+        android:layout_toRightOf="@+id/alarm_icon"
         android:layout_marginLeft="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:lines="1"
+        android:ellipsize="end"
+        android:text="알람"
+        android:id="@+id/message"
+        />
+
+    <TextView
+        android:layout_marginLeft="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/alarm_icon"
+        android:layout_below="@+id/message"
         android:id="@+id/alarmtime"
         android:textSize="45dp"
 
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alarmtime"
+        android:layout_alignBottom="@+id/alarmtime"
+        android:textSize="30dp"
+        android:id="@+id/ampm"
         />
 
     <ImageView
@@ -48,6 +68,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/alarm_icon"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:weightSum="7"
         >
@@ -61,6 +82,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView
@@ -72,6 +94,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView
@@ -83,6 +106,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView
@@ -94,6 +118,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView
@@ -105,6 +130,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView
@@ -116,6 +142,7 @@
             android:textSize="16dp"
             android:gravity="center"
             android:padding="10dp"
+            android:layout_marginRight="3dp"
             />
 
         <TextView

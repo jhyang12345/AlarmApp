@@ -1,6 +1,7 @@
 package com.arrata.user.alarmapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
+
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -56,6 +63,28 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
         holder.alarmTime.setText(hour + ":" + minute);
 
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
+            DateFormatSymbols symbols = new DateFormatSymbols(Locale.US);
+            sdf.setDateFormatSymbols(symbols);
+            final Date dateObj = sdf.parse(hour + ":" + minute);
+            System.out.println(dateObj);
+            SimpleDateFormat next = new SimpleDateFormat("K:mm a");
+            next.setDateFormatSymbols(symbols);
+            holder.ampm.setText(next.format(dateObj).substring(next.format(dateObj).length() - 2, next.format(dateObj).length()));
+            System.out.println(next.format(dateObj));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+        if(alarm.getMessage() == null || alarm.getMessage().length() == 0) {
+            holder.alarmMessage.setText("알람");
+        } else {
+            holder.alarmMessage.setText(alarm.getMessage());
+        }
+
         holder.closeButton.setTag(position);
 
         holder.closeButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +109,39 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
             }
         });
+
+        holder.activeIcon.setTag(position);
+
+        holder.activeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (Integer) v.getTag();
+
+                long code = alarms.get(position).getCode();
+                Alarm alarm = myRealm.where(Alarm.class)
+                        .equalTo("code", code)
+                        .findFirst();
+
+                myRealm.beginTransaction();
+                alarm.setActive(!alarm.isActive());
+                myRealm.commitTransaction();
+
+                alarm = myRealm.where(Alarm.class)
+                        .equalTo("code", code)
+                        .findFirst();
+
+                activate((ImageView) v, alarm.isActive());
+
+            }
+        });
+
+        if(alarm.isMonday()) selectDay(holder.mon);
+        if(alarm.isTuesday()) selectDay(holder.tue);
+        if(alarm.isWednesday()) selectDay(holder.wed);
+        if(alarm.isThursday()) selectDay(holder.thu);
+        if(alarm.isFriday()) selectDay(holder.fri);
+        if(alarm.isSaturday()) selectDay(holder.sat);
+        if(alarm.isSunday()) selectDay(holder.sun);
     }
 
     @Override
@@ -96,16 +158,47 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView alarmTime;
+        private TextView ampm;
+        private TextView alarmMessage;
         private ImageView closeButton;
+        private ImageView activeIcon;
+        private TextView mon;
+        private TextView tue;
+        private TextView wed;
+        private TextView thu;
+        private TextView fri;
+        private TextView sat;
+        private TextView sun;
 
 
         public ViewHolder(View v) {
             super(v);
             alarmTime = (TextView) v.findViewById(R.id.alarmtime);
+            ampm = (TextView) v.findViewById(R.id.ampm);
+            alarmMessage = (TextView) v.findViewById(R.id.message);
             closeButton = (ImageView) v.findViewById(R.id.close_button);
-
+            activeIcon = (ImageView) v.findViewById(R.id.alarm_icon);
+            mon = (TextView) v.findViewById(R.id.monday);
+            tue = (TextView) v.findViewById(R.id.tuesday);
+            wed = (TextView) v.findViewById(R.id.wednesday);
+            thu = (TextView) v.findViewById(R.id.thursday);
+            fri = (TextView) v.findViewById(R.id.friday);
+            sat = (TextView) v.findViewById(R.id.saturday);
+            sun = (TextView) v.findViewById(R.id.sunday);
         }
 
+    }
 
+    void selectDay(TextView v) {
+        v.setBackgroundResource(R.drawable.selected_background);
+        v.setTextColor(Color.WHITE);
+    }
+
+    void activate(ImageView v, boolean active) {
+        if(active) {
+            v.setAlpha((float) 1.0);
+        } else {
+            v.setAlpha((float) 0.1);
+        }
     }
 }

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         RealmResults<Alarm> results2 =
                 myRealm.where(Alarm.class)
-                        .findAll();
+                        .findAllSorted("edited", true);
 
         alarmAdapter = new AlarmAdapter(this);
         mRecyclerView.setAdapter(alarmAdapter);
