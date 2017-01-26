@@ -40,4 +40,92 @@
         android:id="@+id/close_button"
         android:src="@drawable/close"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/alarm_icon"
+        android:gravity="center"
+        android:weightSum="7"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="월"
+            android:id="@+id/monday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="화"
+            android:id="@+id/tuesday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="수"
+            android:id="@+id/wednesday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="목"
+            android:id="@+id/thursday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="금"
+            android:id="@+id/friday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="토"
+            android:id="@+id/saturday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="일"
+            android:id="@+id/sunday"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+    </LinearLayout>
+
 </RelativeLayout>
