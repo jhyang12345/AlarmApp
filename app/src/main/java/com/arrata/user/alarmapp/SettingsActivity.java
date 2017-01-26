@@ -25,6 +25,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+
 import io.realm.Realm;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -133,6 +134,42 @@ public class SettingsActivity extends AppCompatActivity {
             setDaySelected(mFriday, fri);
             setDaySelected(mSaturday, sat);
             setDaySelected(mSunday, sun);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_WEEK);
+            Log.d("WeekDay", String.valueOf(day));
+            Log.d("WeekDay", String.valueOf(Calendar.FRIDAY));
+            switch(day) {
+                case Calendar.SUNDAY: {
+                    sun = true;
+                    setDaySelected(mSunday, sun);
+                    break;
+                } case Calendar.MONDAY: {
+                    mon = true;
+                    setDaySelected(mMonday, mon);
+                    break;
+                }case Calendar.TUESDAY: {
+                    tue = true;
+                    setDaySelected(mTuesday, tue);
+                    break;
+                }case Calendar.WEDNESDAY: {
+                    wed = true;
+                    setDaySelected(mWednesday, wed);
+                    break;
+                }case Calendar.THURSDAY: {
+                    thu = true;
+                    setDaySelected(mThursday, thu);
+                    break;
+                }case Calendar.FRIDAY: {
+                    fri = true;
+                    setDaySelected(mFriday, fri);
+                    break;
+                }case Calendar.SATURDAY: {
+                    sat = true;
+                    setDaySelected(mSaturday, sat);
+                    break;
+                }
+            }
         }
 
         mMonday.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +235,6 @@ public class SettingsActivity extends AppCompatActivity {
                 if(!fri) {
                     mFriday.setBackgroundResource(R.drawable.selected_background);
                     mFriday.setTextColor(Color.WHITE);
-
                     fri = true;
                 } else {
                     mFriday.setBackgroundColor(0);
@@ -261,10 +297,12 @@ public class SettingsActivity extends AppCompatActivity {
                     alarm.setMinutes(minutes);
                     if(myRealm.where(Alarm.class).findFirst() == null) {
                         alarm.setCode(0);
+                        code = 0;
                     } else {
-                        alarm.setCode(getNextKey());
-                    }
+                        code = getNextKey();
+                        alarm.setCode(code);
 
+                    }
                     alarm.setEdited(time);
                     alarm.setMonday(mon);
                     alarm.setTuesday(tue);
@@ -298,6 +336,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
                 alarmIntent.putExtra("code", code);
+
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, code, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 setAlarm(pendingIntent, code, hours, minutes, mon, tue, wed, thu, fri, sat, sun);
 

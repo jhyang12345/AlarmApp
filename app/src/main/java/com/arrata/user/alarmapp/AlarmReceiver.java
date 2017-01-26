@@ -18,10 +18,12 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         audioPlayer = new AudioPlayer();
         //audioPlayer.play(context, R.raw.epilogue);
 
-        Log.d("AlarmReceiver", "called");
+        int code = intent.getIntExtra("code", 0);
+
+        Log.d("AlarmReceiver", "called " + String.valueOf(code)) ;
 
         Intent service = new Intent(context, AlarmIntentService.class);
-        service.putExtra("code", intent.getIntExtra("code", 0));
+        service.putExtra("code", code);
         startWakefulService(context, service);
 
     }

@@ -25,11 +25,14 @@
             android:label="@string/title_activity_settings"
             android:noHistory="true"
             android:theme="@style/AppTheme"></activity>
-        <activity
-            android:name=".AlarmActive"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <receiver android:name=".AlarmReceiver" />
+
+        <activity
+            android:name=".AlarmActive"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
 
         <service
             android:name=".AlarmIntentService"

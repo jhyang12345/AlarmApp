@@ -71,8 +71,9 @@ public class AlarmIntentService extends IntentService {
         }
 
         Intent startActivity = new Intent(getApplicationContext(), AlarmActive.class);
-        startActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity.putExtra("code", intent.getIntExtra("code", 0));
+        startActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         startActivity(startActivity);
 
         AlarmReceiver.completeWakefulIntent(intent);
