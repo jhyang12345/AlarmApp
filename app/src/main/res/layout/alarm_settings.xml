@@ -56,6 +56,8 @@
         android:layout_height="wrap_content"
         android:textSize="24dp"
         android:lines="1"
+        android:maxLines="1"
+        android:inputType="text"
         android:id="@+id/message"
         android:backgroundTint="@color/colorPrimary"
         android:hint="알람 제목"

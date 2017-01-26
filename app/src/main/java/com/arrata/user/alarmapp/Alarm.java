@@ -13,7 +13,7 @@ import io.realm.annotations.PrimaryKey;
 public class Alarm extends RealmObject {
 
     @PrimaryKey
-    private long code;
+    private int code;
     private long edited;
     private int hours;
     private int minutes;
@@ -28,11 +28,11 @@ public class Alarm extends RealmObject {
     private String message;
     public static String[] daysofweek = {"월", "화", "수", "목", "금", "토", "일"};
 
-    public long getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

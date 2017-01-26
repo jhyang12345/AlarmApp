@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.arrata.user.alarmapp">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,10 +24,21 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:noHistory="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".AlarmActive"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        </activity>
+        <receiver android:name=".AlarmReceiver" />
 
+        <service
+            android:name=".AlarmIntentService"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name=".AlarmIntentService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

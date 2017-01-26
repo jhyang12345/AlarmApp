@@ -99,7 +99,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 Log.d("Adapter", String.valueOf(position));
                 Log.d("Adapter", String.valueOf(alarms.get(position).getCode()));
 
-                long code = alarms.get(position).getCode();
+                int code = alarms.get(position).getCode();
                 RealmResults<Alarm> results =
                         myRealm.where(Alarm.class)
                                 .equalTo("code", code)
@@ -124,7 +124,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             public void onClick(View v) {
                 int position = (Integer) v.getTag();
 
-                long code = alarms.get(position).getCode();
+                int code = alarms.get(position).getCode();
                 Alarm alarm = myRealm.where(Alarm.class)
                         .equalTo("code", code)
                         .findFirst();
@@ -158,7 +158,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 Intent intent = new Intent(context, SettingsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("role", "edit");
-                intent.putExtra("code", (long) v.getTag());
+                intent.putExtra("code", (int) v.getTag());
                 context.startActivity(intent);
             }
         });

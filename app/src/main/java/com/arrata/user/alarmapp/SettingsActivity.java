@@ -1,5 +1,7 @@
 package com.arrata.user.alarmapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 import io.realm.Realm;
 
@@ -42,6 +46,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     TimePicker timePicker;
 
+    static int hours;
+    static int minutes;
+
     static boolean mon = false;
     static boolean tue = false;
     static boolean wed = false;
@@ -52,11 +59,30 @@ public class SettingsActivity extends AppCompatActivity {
 
     static boolean adding = false;
 
-    static long code;
+    static int code;
 
     static String message = "";
 
     Realm myRealm;
+
+    AlarmManager alarmManager;
+
+    void editInit(int code) {
+        Alarm alarm = myRealm.where(Alarm.class)
+                .equalTo("code", code)
+                .findFirst();
+        mon = alarm.isMonday();
+        tue = alarm.isTuesday();
+        wed = alarm.isWednesday();
+        thu = alarm.isThursday();
+        fri = alarm.isFriday();
+        sat = alarm.isSaturday();
+        sun = alarm.isSunday();
+        message = alarm.getMessage();
+
+        hours = alarm.getHours();
+        minutes = alarm.getMinutes();
+    }
 
 
     @Override
@@ -78,6 +104,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         timePicker = (TimePicker) findViewById(R.id.timePicker);
 
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         myRealm = Realm.getInstance(this);
 
         Intent intent = getIntent();
@@ -87,7 +115,24 @@ public class SettingsActivity extends AppCompatActivity {
 
         Log.d("SettingsActivity role", String.valueOf(adding));
         if(!adding) {
+            code = intent.getIntExtra("code", 0);
             Log.d("SettingActivity code", String.valueOf(code));
+            editInit(code);
+            if(Build.VERSION.SDK_INT >= 23 ) {
+                timePicker.setHour(hours);
+                timePicker.setMinute(minutes);
+            } else {
+                timePicker.setCurrentHour(hours);
+                timePicker.setCurrentMinute(minutes);
+            }
+            mMessage.setText(message);
+            setDaySelected(mMonday, mon);
+            setDaySelected(mTuesday, tue);
+            setDaySelected(mWednesday, wed);
+            setDaySelected(mThursday, thu);
+            setDaySelected(mFriday, fri);
+            setDaySelected(mSaturday, sat);
+            setDaySelected(mSunday, sun);
         }
 
         mMonday.setOnClickListener(new View.OnClickListener() {
@@ -192,8 +237,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         mSave.setOnClickListener(new View.OnClickListener() {
-            int hours;
-            int minutes;
+
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= 23 ) {
@@ -209,23 +253,53 @@ public class SettingsActivity extends AppCompatActivity {
 
                 message = mMessage.getText().toString();
 
-                myRealm.beginTransaction();
+                if(adding) {
+                    myRealm.beginTransaction();
 
-                Alarm alarm = myRealm.createObject(Alarm.class);
-                alarm.setHours(hours);
-                alarm.setMinutes(minutes);
-                alarm.setCode(time);
-                alarm.setEdited(time);
-                alarm.setMonday(mon);
-                alarm.setTuesday(tue);
-                alarm.setWednesday(wed);
-                alarm.setThursday(thu);
-                alarm.setFriday(fri);
-                alarm.setSaturday(sat);
-                alarm.setSunday(sun);
-                alarm.setActive(true);
-                alarm.setMessage(message);
-                myRealm.commitTransaction();
+                    Alarm alarm = myRealm.createObject(Alarm.class);
+                    alarm.setHours(hours);
+                    alarm.setMinutes(minutes);
+                    if(myRealm.where(Alarm.class).findFirst() == null) {
+                        alarm.setCode(0);
+                    } else {
+                        alarm.setCode(getNextKey());
+                    }
+
+                    alarm.setEdited(time);
+                    alarm.setMonday(mon);
+                    alarm.setTuesday(tue);
+                    alarm.setWednesday(wed);
+                    alarm.setThursday(thu);
+                    alarm.setFriday(fri);
+                    alarm.setSaturday(sat);
+                    alarm.setSunday(sun);
+                    alarm.setActive(true);
+                    alarm.setMessage(message);
+                    myRealm.commitTransaction();
+                } else {
+                    Alarm alarm = myRealm.where(Alarm.class)
+                            .equalTo("code", code)
+                            .findFirst();
+                    myRealm.beginTransaction();
+                    alarm.setHours(hours);
+                    alarm.setMinutes(minutes);
+                    alarm.setEdited(time);
+                    alarm.setMonday(mon);
+                    alarm.setTuesday(tue);
+                    alarm.setWednesday(wed);
+                    alarm.setThursday(thu);
+                    alarm.setFriday(fri);
+                    alarm.setSaturday(sat);
+                    alarm.setSunday(sun);
+                    alarm.setActive(true);
+                    alarm.setMessage(message);
+                    myRealm.commitTransaction();
+                }
+
+                Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+                alarmIntent.putExtra("code", code);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, code, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                setAlarm(pendingIntent, code, hours, minutes, mon, tue, wed, thu, fri, sat, sun);
 
                 Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -234,6 +308,35 @@ public class SettingsActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    void setAlarm(PendingIntent pendingIntent, int code, int hours, int minutes, boolean mon, boolean tue, boolean wed, boolean thu, boolean fri, boolean sat, boolean sun) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+        if(Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+        Log.d("setAlarm", "alarm set at " + calendar.toString());
+
+    }
+
+    void setDaySelected(TextView v, boolean val) {
+        if(val) {
+            v.setBackgroundResource(R.drawable.selected_background);
+            v.setTextColor(Color.WHITE);
+
+        } else {
+            v.setBackgroundColor(0);
+            v.setTextColor(Color.BLACK);
+
+        }
+    }
+
+    public int getNextKey() {
+        return myRealm.where(Alarm.class).max("code").intValue() + 1;
     }
 
 }
