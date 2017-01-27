@@ -1,8 +1,11 @@
 package com.arrata.user.alarmapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import org.w3c.dom.Text;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -65,6 +69,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         }
         holder.alarmTime.setText(hour + ":" + minute);
 
+        selectDay(holder.mon, alarm.isMonday());
+        selectDay(holder.tue, alarm.isTuesday());
+        selectDay(holder.wed, alarm.isWednesday());
+        selectDay(holder.thu, alarm.isThursday());
+        selectDay(holder.fri, alarm.isFriday());
+        selectDay(holder.sat, alarm.isSaturday());
+        selectDay(holder.sun, alarm.isSunday());
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("H:mm");
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.US);
@@ -74,8 +86,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             SimpleDateFormat next = new SimpleDateFormat("K:mm a");
             next.setDateFormatSymbols(symbols);
 
+            holder.alarmTime.setText(next.format(dateObj).substring(0, next.format(dateObj).length() - 3));
             holder.ampm.setText(next.format(dateObj).substring(next.format(dateObj).length() - 2, next.format(dateObj).length()));
-
+            Log.d("Formatted time", next.format(dateObj));
         } catch (ParseException e) {
 
             holder.ampm.setText("");
@@ -100,6 +113,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 Log.d("Adapter", String.valueOf(alarms.get(position).getCode()));
 
                 int code = alarms.get(position).getCode();
+                //getting rid of item in database
                 RealmResults<Alarm> results =
                         myRealm.where(Alarm.class)
                                 .equalTo("code", code)
@@ -108,9 +122,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 results.clear();
                 myRealm.commitTransaction();
 
-
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, alarms.size());
+
+                //getting rid of all possible pendingIntents
+                SettingsActivity st = new SettingsActivity();
+                int[] gC = st.generateCode(code);
+                for(int i = 0; i < 7; ++i) {
+                    Log.d("AlarmAdapter", String.valueOf(gC[i]));
+                    cancelAlarm(context, gC[i]);
+                }
 
             }
         });
@@ -129,6 +150,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                         .equalTo("code", code)
                         .findFirst();
 
+                boolean currentState = alarm.isActive();
+
                 myRealm.beginTransaction();
                 alarm.setActive(!alarm.isActive());
                 myRealm.commitTransaction();
@@ -139,21 +162,78 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
                 activate((ImageView) v, alarm.isActive());
 
+                SettingsActivity st = new SettingsActivity();
+                int[] gC = st.generateCode(code);
+                if(!currentState) {
+                    int hours = alarm.getHours();
+                    int minutes = alarm.getMinutes();
+                    if(alarm.isMonday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.MONDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.MONDAY);
+                    }
+                    if(alarm.isTuesday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.TUESDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.TUESDAY);
+                    }
+                    if(alarm.isWednesday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.WEDNESDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.WEDNESDAY);
+                    }
+                    if(alarm.isThursday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.THURSDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.THURSDAY);
+                    }
+                    if(alarm.isFriday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.FRIDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.FRIDAY);
+                    }
+                    if(alarm.isSaturday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.SATURDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.SATURDAY);
+                    }
+                    if(alarm.isSunday()) {
+                        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+
+                        alarmIntent.putExtra("code", code);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, gC[Calendar.SUNDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        setAlarm(pendingIntent, code, hours, minutes, Calendar.SUNDAY);
+                    }
+
+                } else {
+                    for(int i = 0; i < 7; ++i) {
+                        Log.d("AlarmAdapter", String.valueOf(gC[i]));
+                        cancelAlarm(context, gC[i]);
+                    }
+                }
+
             }
         });
 
-        if(alarm.isMonday()) selectDay(holder.mon);
-        if(alarm.isTuesday()) selectDay(holder.tue);
-        if(alarm.isWednesday()) selectDay(holder.wed);
-        if(alarm.isThursday()) selectDay(holder.thu);
-        if(alarm.isFriday()) selectDay(holder.fri);
-        if(alarm.isSaturday()) selectDay(holder.sat);
-        if(alarm.isSunday()) selectDay(holder.sun);
+
 
         holder.wholeAlarm.setTag(alarm.getCode());
         holder.wholeAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Log.d("WholeAlarm", "clicked!");
                 Intent intent = new Intent(context, SettingsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -212,9 +292,50 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     }
 
-    void selectDay(TextView v) {
-        v.setBackgroundResource(R.drawable.selected_background);
-        v.setTextColor(Color.WHITE);
+    void cancelAlarm(Context context, int alarmId) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        manager.cancel(pendingIntent);
+    }
+
+    void setAlarm(PendingIntent pendingIntent, int code, int hours, int minutes, int dayOfWeek) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+        calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Calendar current = Calendar.getInstance();
+        current.getTimeInMillis();
+
+        long trigger = 0;
+        if(current.getTimeInMillis() > calendar.getTimeInMillis()) {
+            trigger = calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY * 7;
+        } else {
+            trigger = calendar.getTimeInMillis();
+        }
+
+        if(Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, trigger, pendingIntent);
+            //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000,pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, pendingIntent);
+            //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000,pendingIntent);
+        }
+        Log.d("setAlarm", "alarm set at " + calendar.toString());
+
+    }
+
+    void selectDay(TextView v, boolean value) {
+        if(value) {
+            v.setBackgroundResource(R.drawable.selected_background);
+            v.setTextColor(Color.WHITE);
+        } else {
+            v.setBackgroundResource(0);
+            v.setTextColor(Color.BLACK);
+        }
     }
 
     void activate(ImageView v, boolean active) {

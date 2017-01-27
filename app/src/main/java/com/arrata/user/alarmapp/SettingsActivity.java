@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -334,11 +335,84 @@ public class SettingsActivity extends AppCompatActivity {
                     myRealm.commitTransaction();
                 }
 
-                Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
-                alarmIntent.putExtra("code", code);
+                //Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
 
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, code, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                setAlarm(pendingIntent, code, hours, minutes, mon, tue, wed, thu, fri, sat, sun);
+                //alarmIntent.putExtra("code", code);
+                //alarmIntent.setData(Uri.parse("custom://" + code));
+                int[] gC = generateCode(code);
+                for(int i = 0; i < 7; ++i) {
+                    Log.d("GeneratedCode", String.valueOf(gC[i]));
+                }
+
+                //PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, code, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                //setAlarm(pendingIntent, code, hours, minutes, mon, tue, wed, thu, fri, sat, sun);
+                //EXPERIMENT TO TEST CANCELLING
+/*                for(int i = 0; i < 3; ++i) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[i], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, hours);
+                    calendar.set(Calendar.MINUTE, minutes + i);
+
+                    if(Build.VERSION.SDK_INT >= 19) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    }
+                }*/
+
+                //setting alarm for each day of week depending on boolean value
+                if(mon) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.MONDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.MONDAY);
+                }
+                if(tue) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.TUESDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.TUESDAY);
+                }
+                if(wed) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.WEDNESDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.WEDNESDAY);
+                }
+                if(thu) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.THURSDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.THURSDAY);
+                }
+                if(fri) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.FRIDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.FRIDAY);
+                }
+                if(sat) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.SATURDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.SATURDAY);
+                }
+                if(sun) {
+                    Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+                    alarmIntent.putExtra("code", code);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, gC[Calendar.SUNDAY], alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    setAlarm(pendingIntent, code, hours, minutes, Calendar.SUNDAY);
+                }
 
                 Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -349,17 +423,54 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    void setAlarm(PendingIntent pendingIntent, int code, int hours, int minutes, boolean mon, boolean tue, boolean wed, boolean thu, boolean fri, boolean sat, boolean sun) {
+    int[] generateCode(int code) {
+        int[] codelist = {0, 0, 0, 0, 0, 0, 0, 0};
+        String buffer = String.valueOf(code);
+        for(int i = 0; i < 5; ++i) {
+            if(buffer.length() > 4) break;
+            buffer = buffer + "0";
+        }
+        for(int i = 0; i < 8; ++i) {
+            codelist[i] = Integer.parseInt(buffer) + i;
+        }
+        return codelist;
+    }
+
+    void setAlarm(PendingIntent pendingIntent, int code, int hours, int minutes, int dayOfWeek) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hours);
         calendar.set(Calendar.MINUTE, minutes);
-        if(Build.VERSION.SDK_INT >= 19) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+        Calendar current = Calendar.getInstance();
+        current.getTimeInMillis();
+
+        long trigger = 0;
+        if(current.getTimeInMillis() > calendar.getTimeInMillis()) {
+            trigger = calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY * 7;
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            trigger = calendar.getTimeInMillis();
+        }
+
+        System.out.println("Trigger " + trigger + " " + current.getTimeInMillis());
+
+        if(Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, trigger, pendingIntent);
+            //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000,pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, pendingIntent);
+            //    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000,pendingIntent);
         }
         Log.d("setAlarm", "alarm set at " + calendar.toString());
 
+    }
+
+    void cancelAlarm(int alarmId) {
+        Intent alarmIntent = new Intent(SettingsActivity.this, AlarmReceiver.class);
+
+        Log.d("CancellingAlarm", String.valueOf(alarmId));
+        //alarmIntent.putExtra("code", code);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, alarmId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
     }
 
     void setDaySelected(TextView v, boolean val) {
