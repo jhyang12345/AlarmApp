@@ -1,6 +1,7 @@
 package com.arrata.user.alarmapp;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 /**
@@ -20,7 +21,9 @@ public class AudioPlayer {
 
     public static void play(Context c, int rid) {
         stop();
+
         mMediaPlayer = MediaPlayer.create(c, rid);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
