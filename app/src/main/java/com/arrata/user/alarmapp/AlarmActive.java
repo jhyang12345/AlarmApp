@@ -152,6 +152,8 @@ public class AlarmActive extends AppCompatActivity {
                                 Manifest.permission.ACCESS_COARSE_LOCATION },
                         1);
 
+            } else {
+                Log.d("Network unconnected", "Network not connected!");
             }
         } catch(SecurityException e) {
             e.printStackTrace();
@@ -211,7 +213,7 @@ public class AlarmActive extends AppCompatActivity {
 
         //Setting the next alarm!!!
         long trigger = 0 ;
-        trigger = current.getTimeInMillis();
+        trigger = calendar.getTimeInMillis();
         while(trigger <= current.getTimeInMillis()) {
             trigger += AlarmManager.INTERVAL_DAY * 7;
         }
@@ -258,7 +260,7 @@ public class AlarmActive extends AppCompatActivity {
 
         @Override
         public void onProviderDisabled(String provider) {
-
+            Log.d("Provider unprovided!", "");
         }
 
     }
@@ -279,6 +281,9 @@ public class AlarmActive extends AppCompatActivity {
                         //Log.d("Location lon", String.valueOf(location.getLongitude()));
                         if(location != null) {
                             location.getLatitude();
+                        }
+                        if(lat == null) {
+                            Toast.makeText(AlarmActive.this, "GPS or Network inaccessible", Toast.LENGTH_LONG).show();
                         }
                         System.out.println(lat + " " + lon);
                     } catch (SecurityException e) {
